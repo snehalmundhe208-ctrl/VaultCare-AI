@@ -1,16 +1,14 @@
-import React ,{useState} from "react";
+import React, { useState } from 'react';
 import { Stethoscope, ShieldCheck, FileText, TrendingUp, QrCode } from 'lucide-react';
-import {useAuth} from "../context/AuthContext";
-import GoogleOAuthModal from "../components/GoogleOAuthModal";
+import { useAuth } from '../context/AuthContext';
 
-export default function LoginPage({onNavigate}) {
-    const {login} = useAuth();
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [errorMsg, setErrorMsg] = useState('');
-    const [showGoogleModal, setShowGoogleModal] = useState(false);
+export default function LoginPage({ onNavigate }) {
+  const { login } = useAuth();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [errorMsg, setErrorMsg] = useState('');
 
-   const handleSubmit = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!email || !password) {
       setErrorMsg('Please enter both Email and Password');
@@ -23,12 +21,6 @@ export default function LoginPage({onNavigate}) {
     } else {
       setErrorMsg(res.error || ' Incorrect password or credentials. Please check your password and try again.');
     }
-  };
-
-  const handleGoogleSuccess = (googleEmail, googleName) => {
-    login(googleEmail, 'oauth-google-pass');
-    setShowGoogleModal(false);
-    onNavigate('app');
   };
 
   const handleForgotPasswordClick = () => {
@@ -169,51 +161,19 @@ export default function LoginPage({onNavigate}) {
                 </button>
               </form>
 
-              {/* Divider */}
-              <div className="relative my-4 text-center">
-                <div className="absolute inset-0 flex items-center">
-                  <div className="w-full border-t border-[#E5E0D5]"></div>
-                </div>
-                <span className="relative bg-white px-4 text-xs font-bold text-[#888888] uppercase tracking-wider">
-                  or continue with
-                </span>
-              </div>
-
-              {/* Google OAuth Button */}
-              <button
-                type="button"
-                onClick={() => setShowGoogleModal(true)}
-                className="w-full bg-white hover:bg-[#FAF8F5] text-black border-2 border-[#E5E0D5] py-3.5 rounded-full font-extrabold text-sm shadow-xs transition-all flex items-center justify-center gap-3 cursor-pointer"
-              >
-                <svg className="w-5 h-5" viewBox="0 0 24 24">
-                  <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17z"/>
-                  <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.28v3.15C3.25 21.3 7.31 24 12 24z"/>
-                  <path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.28C.46 8.21 0 10.05 0 12s.46 3.79 1.28 5.42l4-3.15z"/>
-                  <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.31 0 3.25 2.7 1.28 6.58l4 3.15c.95-2.83 3.6-4.98 6.72-4.98z"/>
-                </svg>
-                Google
-              </button>
-
               <div className="text-center pt-2">
                 <span className="text-xs text-[#777777] font-semibold">
-                  Don't have an account yet?{' '}
-                  <button onClick={() => onNavigate('signup')} className="text-rose-700 font-bold hover:underline cursor-pointer">
-                    Sign Up
+                  Don't have an account yet? {' '}
+                  <button onClick={() => onNavigate('signup')} className= "text-rose-700 font-bold hover:underline cursor-pointer">
+                    Sign up
                   </button>
                 </span>
+                </div>
               </div>
             </div>
+
           </div>
-
-        </div>
-      </main>
-
-      {/* Google OAuth Modal */}
-      <GoogleOAuthModal
-        isOpen={showGoogleModal}
-        onClose={() => setShowGoogleModal(false)}
-        onSuccess={handleGoogleSuccess}
-      />
-    </div>
+        </main>
+      </div>
   );
 }
