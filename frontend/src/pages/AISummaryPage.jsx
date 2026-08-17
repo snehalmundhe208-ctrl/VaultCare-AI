@@ -36,7 +36,7 @@ import {
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useVault } from '../context/VaultContext';
-//Adding AI service URL -
+//for FastAPI BASE URL
 const AI_SERVICE_URL = import.meta.env.VITE_AI_SERVICE_URL || 'http://localhost:8000';
 
 // Helper function to render text nicely without raw markdown symbols (###, **)
@@ -603,6 +603,7 @@ export default function AISummaryPage() {
   };
 
   // Send Message & AI Response Generation (calls FastAPI ai-service)
+  // Send Message & AI Response Generation (calls FastAPI ai-service)
   const handleSendMessage = async (textToSend) => {
     const messageText = textToSend || query;
     if (!messageText.trim() && attachedFiles.length === 0) return;
@@ -694,7 +695,7 @@ export default function AISummaryPage() {
 
   // Quick Prompt Chips
   const promptChips = [
-    { label: ' Explain Blood Sugar & HbA1c', prompt: 'Can you explain my blood sugar levels and HbA1c trend?' },
+    { label: '🩸 Explain Blood Sugar & HbA1c', prompt: 'Can you explain my blood sugar levels and HbA1c trend?' },
     { label: ' Summarize CBC Blood Test', prompt: 'Give me a summary of my latest Complete Blood Count (CBC) report.' },
     { label: ' Diet plan for Cholesterol', prompt: 'What dietary changes should I make for my cholesterol levels?' },
     { label: ' Check Vitamin D3 dosage', prompt: 'What is my current Vitamin D3 status and recommended dosage?' }

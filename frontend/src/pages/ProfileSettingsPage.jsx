@@ -142,9 +142,9 @@ export default function ProfileSettingsPage() {
     }
   };
 
-  const handleSaveProfile = (e) => {
+  const handleSaveProfile = async (e) => {
     e?.preventDefault();
-    updateUser({
+    const result = await updateUser({
       fullName,
       email,
       phone,
@@ -155,7 +155,11 @@ export default function ProfileSettingsPage() {
       dob
     });
     setLanguage(selectedLang);
-    alert(t('savedSuccess') || ' Profile settings saved successfully!');
+    if (result?.success) {
+      alert(t('savedSuccess') || ' Profile settings saved successfully!');
+    } else {
+      alert('Saved locally, but could not sync to server: ' + (result?.error || 'unknown error'));
+    }
   };
 
   const handlePasswordUpdate = (e) => {
@@ -465,7 +469,7 @@ export default function ProfileSettingsPage() {
                     <label className="block text-xs font-bold text-gray-600 mb-1">{t('dob')}</label>
                     <input
                       type="date"
-                      value={dob}
+                      value={dob ? dob.split('T')[0] : ''}
                       onChange={(e) => setDob(e.target.value)}
                       className="w-full bg-white border border-[#CCCCCC] focus:border-black rounded-xl px-4 py-2.5 text-xs font-bold text-black outline-none"
                     />
