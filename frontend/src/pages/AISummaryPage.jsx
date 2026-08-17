@@ -36,6 +36,8 @@ import {
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useVault } from '../context/VaultContext';
+//Adding AI service URL -
+const AI_SERVICE_URL = import.meta.env.VITE_AI_SERVICE_URL || 'http://localhost:8000';
 
 // Helper function to render text nicely without raw markdown symbols (###, **)
 function FormattedText({ text }) {
@@ -600,8 +602,8 @@ export default function AISummaryPage() {
            `• **Clinical Recommendation**: Continue your current diet and activity routine. If you are experiencing new symptoms, upload the relevant report or consult your physician.`;
   };
 
-  // Send Message & AI Response Generation
-  const handleSendMessage = (textToSend) => {
+  // Send Message & AI Response Generation (calls FastAPI ai-service)
+  const handleSendMessage = async (textToSend) => {
     const messageText = textToSend || query;
     if (!messageText.trim() && attachedFiles.length === 0) return;
 
@@ -617,14 +619,10 @@ export default function AISummaryPage() {
     const updatedHistory = chatHistory.map(chat => {
       if (chat.id === activeChatId) {
         const isFirstMsg = chat.messages.length === 0;
-        const newTitle = isFirstMsg 
-          ? ((messageText || currentAttachments[0]?.name || 'Health Query').slice(0, 30)) 
+        const newTitle = isFirstMsg
+          ? ((messageText || currentAttachments[0]?.name || 'Health Query').slice(0, 30))
           : chat.title;
-        return {
-          ...chat,
-          title: newTitle,
-          messages: [...chat.messages, userMsg]
-        };
+        return { ...chat, title: newTitle, messages: [...chat.messages, userMsg] };
       }
       return chat;
     });
@@ -634,30 +632,56 @@ export default function AISummaryPage() {
     setAttachedFiles([]);
     setIsAsking(true);
 
-    setTimeout(() => {
-      const aiText = generateSmartAIResponse(messageText, currentAttachments);
+    try {
+      const res = await fetch(`${AI_SERVICE_URL}/api/ask`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          query: messageText,
+          patient_id: user?.email || 'guest',
+          reports_context: reports.slice(0, 5) // last few reports as context
+        })
+      });
+
+      let aiText, confidence;
+      if (res.ok) {
+        const data = await res.json();
+        aiText = data.answer;
+        confidence = data.confidence ? `${Math.round(data.confidence * 100)}%` : '—';
+      } else {
+        // Service reachable but errored
+        aiText = generateSmartAIResponse(messageText, currentAttachments);
+        confidence = '—';
+      }
 
       const aiMsg = {
         id: 'm-ai-' + Date.now(),
         sender: 'ai',
         text: aiText,
         time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-        confidence: '98%',
+        confidence,
         referencedReports: currentAttachments.length > 0 ? [currentAttachments[0].name] : (reports.length > 0 ? [reports[0].name] : ['Medical Vault Baseline'])
       };
 
-      setChatHistory(prev => prev.map(chat => {
-        if (chat.id === activeChatId) {
-          return {
-            ...chat,
-            messages: [...chat.messages, aiMsg]
-          };
-        }
-        return chat;
-      }));
-
+      setChatHistory(prev => prev.map(chat =>
+        chat.id === activeChatId ? { ...chat, messages: [...chat.messages, aiMsg] } : chat
+      ));
+    } catch (e) {
+      // AI service unreachable — local fallback so UI never breaks
+      const aiMsg = {
+        id: 'm-ai-' + Date.now(),
+        sender: 'ai',
+        text: generateSmartAIResponse(messageText, currentAttachments),
+        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        confidence: '—',
+        referencedReports: reports.length > 0 ? [reports[0].name] : ['Medical Vault Baseline']
+      };
+      setChatHistory(prev => prev.map(chat =>
+        chat.id === activeChatId ? { ...chat, messages: [...chat.messages, aiMsg] } : chat
+      ));
+    } finally {
       setIsAsking(false);
-    }, 1000);
+    }
   };
 
   const handleCopyText = (text, id) => {
@@ -670,7 +694,7 @@ export default function AISummaryPage() {
 
   // Quick Prompt Chips
   const promptChips = [
-    { label: '🩸 Explain Blood Sugar & HbA1c', prompt: 'Can you explain my blood sugar levels and HbA1c trend?' },
+    { label: ' Explain Blood Sugar & HbA1c', prompt: 'Can you explain my blood sugar levels and HbA1c trend?' },
     { label: ' Summarize CBC Blood Test', prompt: 'Give me a summary of my latest Complete Blood Count (CBC) report.' },
     { label: ' Diet plan for Cholesterol', prompt: 'What dietary changes should I make for my cholesterol levels?' },
     { label: ' Check Vitamin D3 dosage', prompt: 'What is my current Vitamin D3 status and recommended dosage?' }
