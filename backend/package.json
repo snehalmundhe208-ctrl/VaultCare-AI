@@ -1,10 +1,11 @@
 {
-  "name": "backend",
+  "name": "vaultcare-backend",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "VaultCare AI PostgreSQL Express Backend Server",
+  "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node server.js",
+    "dev": "node --watch server.js"
   },
   "keywords": [],
   "author": "",
@@ -15,6 +16,7 @@
     "cors": "^2.8.6",
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
+    "googleapis": "^174.0.1",
     "jsonwebtoken": "^9.0.3",
     "pdfkit": "^0.19.1",
     "pg": "^8.23.0",
