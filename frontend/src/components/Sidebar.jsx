@@ -132,11 +132,11 @@ export default function Sidebar({ activeTab, setActiveTab }) {
               </div>
             </div>
             <button
-                onClcik={logout}
+                onClick={logout}
                 title="Logout"
-                classname="p-2 text - [#777777] hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors"
+                className="p-2 text-[#777777] hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors"
             >
-                <Logout classname="w-4 h-4" />
+                <LogOut className="w-4 h-4" />
             </button>
         </div>
     </div>
