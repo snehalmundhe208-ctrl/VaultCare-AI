@@ -1,4 +1,4 @@
-import React { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Send, MoreVertical, ShieldAlert, UserX, Check, Clock, User, Stethoscope, Search, MessageSquare, AlertCircle, Paperclip, FileText, Download, ShieldCheck, FileCheck, Eye, CornerUpLeft, X } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useVault } from '../context/VaultContext';
