@@ -4,16 +4,15 @@ import {useAuth} from '../context/AuthContext';
 
 export default function MFAPage({onNavigate,isForgotPasswordMode = true}) {
     const {user, verifyMfa} = useAuth();
-    const [emailInput,setEmailInput]= useState(user?.email  || 'patient@vaultcare.ai');
-    const [otpSent,setOtpSent] = useState(false);
-    const[isTimeRunning,setIsTimeRunning]= useState(false);
-    const [otp,setOtp] = useState(['','','','','','']); //Completely Blank by default
-    const [timer,setTimer]= useState(180); //03:00 countdown
-    const [showPasswordResetForm,setShowPasswordResetForm] = useState(false);
-    const [newPassword,setNewPassword]=useState('');
-    const [confirmNewPassword,setConfirmNewPassword]= useState('');
-    const [notification,setNotification]=useState('');
-     const [notification, setNotification] = useState('');
+    const [emailInput, setEmailInput] = useState(user?.email  || 'patient@vaultcare.ai');
+    const [otpSent, setOtpSent] = useState(false);
+    const[isTimerRunning, setIsTimerRunning] = useState(false);
+    const [otp, setOtp] = useState(['','','','','','']); //Completely Blank by default
+    const [timer, setTimer]= useState(180); //03:00 countdown
+    const [showPasswordResetForm, setShowPasswordResetForm] = useState(false);
+    const [newPassword, setNewPassword] = useState('');
+    const [confirmNewPassword, setConfirmNewPassword] = useState('');
+    const [notification, setNotification] = useState('');
 
   // Countdown timer effect - ONLY runs when isTimerRunning is true
   useEffect(() => {
