@@ -1,122 +1,146 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
-import './App.css'
+import React, { useState } from 'react';
+import { AuthProvider, useAuth } from './context/AuthContext';
+import { VaultProvider } from './context/VaultContext';
 
-function App() {
-  const [count, setCount] = useState(0)
+// Pre-login pages
+import LandingPage from './pages/LandingPage';
+import LoginPage from './pages/LoginPage';
+import SignupPage from './pages/SignupPage';
+import RoleSelectionPage from './pages/RoleSelectionPage';
+import MFAPage from './pages/MFAPage';
 
-  return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
+// App shell
+import Sidebar from './components/Sidebar';
+import Topbar from './components/Topbar';
+
+// Patient pages (each is its own tab)
+import PatientDashboard from './pages/PatientDashboard';
+import MyReportsPage from './pages/MyReportsPage';
+import UploadReportPage from './pages/UploadReportPage';
+import AISummaryPage from './pages/AISummaryPage';
+import HealthTimelinePage from './pages/HealthTimelinePage';
+import AppointmentsPage from './pages/AppointmentsPage';
+import FamilyVaultPage from './pages/FamilyVaultPage';
+import ProfileSettingsPage from './pages/ProfileSettingsPage';
+import ChatWindow from './components/ChatWindow';
+
+// Doctor / Admin — these are self-contained multi-tab dashboards
+import DoctorDashboard from './pages/DoctorDashboard';
+import AdminDashboard from './pages/AdminDashboard';
+
+import './App.css';
+
+// Human-readable titles shown in the Topbar for each patient tab
+const PATIENT_TAB_TITLES = {
+  dashboard: 'Dashboard',
+  reports: 'My Reports',
+  chat: 'Chat with Doctor',
+  'family-vault': 'Family Vault',
+  upload: 'Upload Report',
+  summary: 'AI Health Summary',
+  timeline: 'Timeline & Analytics',
+  appointments: 'Appointments',
+  help: 'Help & Guide',
+  settings: 'Profile Settings'
+};
+
+function AppContent() {
+  // Pre-login navigation: 'landing' | 'login' | 'signup' | 'role-select' | 'forgot-mfa'
+  const [page, setPage] = useState('landing');
+  // Post-login active sidebar tab
+  const [activeTab, setActiveTab] = useState('dashboard');
+
+  const { user, mfaVerified } = useAuth();
+
+  const handleNavigate = (target) => setPage(target);
+
+  // ===================== LOGGED-IN APP SHELL =====================
+  if (user && mfaVerified) {
+    const currentRole = (user.role || 'patient').toLowerCase();
+
+    const renderContent = () => {
+      if (currentRole === 'doctor') {
+        // DoctorDashboard handles all of its own tabs internally
+        return <DoctorDashboard activeTab={activeTab} setActiveTab={setActiveTab} />;
+      }
+
+      if (currentRole === 'admin') {
+        // AdminDashboard handles all of its own tabs internally
+        return <AdminDashboard activeTab={activeTab} setActiveTab={setActiveTab} />;
+      }
+
+      // Patient — each sidebar tab maps to its own standalone page
+      switch (activeTab) {
+        case 'dashboard':
+          return <PatientDashboard onNavigateTab={setActiveTab} />;
+        case 'reports':
+          return <MyReportsPage />;
+        case 'chat':
+          return <ChatWindow />;
+        case 'family-vault':
+          return <FamilyVaultPage />;
+        case 'upload':
+          return <UploadReportPage onNavigateTab={setActiveTab} />;
+        case 'summary':
+          return <AISummaryPage />;
+        case 'timeline':
+          return <HealthTimelinePage />;
+        case 'appointments':
+          return <AppointmentsPage />;
+        case 'settings':
+          return <ProfileSettingsPage />;
+        case 'help':
+          // No dedicated Help & Guide page exists yet in this repo.
+          return (
+            <div className="p-8 text-sm text-gray-500 font-medium">
+              Help & Guide content coming soon.
+            </div>
+          );
+        default:
+          return <PatientDashboard onNavigateTab={setActiveTab} />;
+      }
+    };
+
+    const topbarTitle =
+      currentRole === 'patient'
+        ? PATIENT_TAB_TITLES[activeTab] || 'VaultCare AI'
+        : 'VaultCare AI';
+
+    return (
+      <div className="flex min-h-screen bg-[#FAF8F5]">
+        <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} />
+        <div className="flex-1 flex flex-col min-w-0">
+          <Topbar title={topbarTitle} />
+          <main className="flex-1 p-6 md:p-8 overflow-y-auto">
+            {renderContent()}
+          </main>
         </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
+      </div>
+    );
+  }
 
-      <div className="ticks"></div>
-
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
-
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
-  )
+  // ===================== PRE-LOGIN FLOW =====================
+  switch (page) {
+    case 'login':
+      return <LoginPage onNavigate={handleNavigate} />;
+    case 'signup':
+      return <SignupPage onNavigate={handleNavigate} />;
+    case 'role-select':
+      return <RoleSelectionPage onNavigate={handleNavigate} />;
+    case 'forgot-mfa':
+      return <MFAPage onNavigate={handleNavigate} isForgotPasswordMode={true} />;
+    case 'landing':
+    default:
+      return <LandingPage onNavigate={handleNavigate} />;
+  }
 }
 
-export default App
+export default function App() {
+  return (
+    <AuthProvider>
+      <VaultProvider>
+        <AppContent />
+      </VaultProvider>
+    </AuthProvider>
+  );
+}
