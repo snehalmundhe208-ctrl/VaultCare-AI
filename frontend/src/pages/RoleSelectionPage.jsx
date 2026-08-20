@@ -71,7 +71,7 @@ export default function RoleSelectionPage({onNavigate}) {
             return (
               <div
                 key={r.id}
-                onClick={() => handleRoleConfirm(r.id)}
+                onClick={() => handleRoleSelection(r.id)}
                 className={`bg-white rounded-2xl p-8 border-2 flex flex-col items-center justify-center text-center cursor-pointer transition-all duration-200 shadow-vault-card hover:shadow-xl hover:-translate-y-1 ${
                   isSelected 
                     ? 'border-black ring-2 ring-black/10 scale-105' 
