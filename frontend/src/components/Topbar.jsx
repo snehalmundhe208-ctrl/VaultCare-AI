@@ -326,8 +326,8 @@ export default function Topbar({ title }) {
           </div>
 
           {/* User AVatar circle */}
-          <div classname="flex items-center flex-shrink-0">
-            <div classname="w-9 h-9rounded-full bg-[#1A1A1A] text-white font-bold flex items-center justify-center text-sm shadow-sm ring-2 ring[#C9A574]">
+          <div className="flex items-center flex-shrink-0">
+            <div className="w-9 h-9rounded-full bg-[#1A1A1A] text-white font-bold flex items-center justify-center text-sm shadow-sm ring-2 ring[#C9A574]">
               {user?.fullName ? user.fullName.charAt(0) : 'P'}
             </div>
           </div>

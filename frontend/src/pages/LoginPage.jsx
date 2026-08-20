@@ -122,7 +122,7 @@ export default function LoginPage({ onNavigate }) {
                   <input
                     type="email"
                     required
-                    placeholder="e.g. snehal@gmail.com or ananya@hospital.com"
+                    placeholder="Enter your email address"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     className="w-full bg-white border border-[#CCCCCC] focus:border-black text-black placeholder-gray-400 px-5 py-3.5 rounded-2xl text-xs font-semibold outline-none transition-all shadow-xs"

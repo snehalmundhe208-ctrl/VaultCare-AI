@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import {Eye , EyeOff , Lock, ShieldCheck, FileText , TreandingUp, QrCode, Stethoscope,User, Upload, CheckCircle2 } from 'lucide-react';
+import {Eye , EyeOff , Lock, ShieldCheck, FileText , TrendingUp, QrCode, Stethoscope,User, Upload, CheckCircle2 } from 'lucide-react';
 import { useAuth} from '../context/AuthContext';
 import { useVault} from '../context/VaultContext';
 

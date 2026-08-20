@@ -28,7 +28,6 @@ import ChatWindow from './components/ChatWindow';
 import DoctorDashboard from './pages/DoctorDashboard';
 import AdminDashboard from './pages/AdminDashboard';
 
-import './App.css';
 
 // Human-readable titles shown in the Topbar for each patient tab
 const PATIENT_TAB_TITLES = {

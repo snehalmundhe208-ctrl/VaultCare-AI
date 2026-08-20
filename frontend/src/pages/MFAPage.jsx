@@ -1,5 +1,5 @@
 import React,{useState, useEffect} from "react";
-import {Shield,Lock,Send,CheckCirlce2} from 'lucide-react';
+import {Shield,Lock,Send,CheckCircle2} from 'lucide-react';
 import {useAuth} from '../context/AuthContext';
 
 export default function MFAPage({onNavigate,isForgotPasswordMode = true}) {
